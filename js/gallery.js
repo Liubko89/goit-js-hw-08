@@ -65,22 +65,9 @@ const images = [
 ];
 
 const container = document.querySelector(".gallery");
+
 container.innerHTML = createMarkup(images);
-container.addEventListener("click", handleImageCklick);
-
-function handleImageCklick(event) {
-  if (event.target === event.currentTarget) {
-    return;
-  }
-  event.preventDefault();
-  const instance = basicLightbox.create(`
-    <div class="modal">
-      <img  src="${event.target.dataset.source}" alt="${event.target.alt}">
-    </div>
-  `);
-
-  instance.show();
-}
+container.addEventListener("click", handleImageClick);
 
 function createMarkup(arr) {
   return arr
@@ -98,4 +85,27 @@ function createMarkup(arr) {
       </li>`
     )
     .join("");
+}
+
+function handleImageClick(event) {
+  if (event.target === event.currentTarget) {
+    return;
+  }
+  event.preventDefault();
+  const instance = basicLightbox.create(`
+    <div class="modal">
+      <img  src="${event.target.dataset.source}" alt="${event.target.alt}">
+    </div>
+  `);
+
+  instance.show();
+
+  document.addEventListener("keydown", keyDownClose);
+
+  function keyDownClose(event) {
+    if (event.code === "Escape") {
+      instance.close();
+      document.removeEventListener("keydown", keyDownClose);
+    }
+  }
 }
